@@ -5,29 +5,53 @@ import {
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
 import CustomButton from '../CommonComponents/CustomButton';
 import CustomTextInput from '../CommonComponents/CustomTextInput';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import SignUpService from '../../services/SignUpService';
+
+import {addSignUpDetails} from './../../redux/Auth/actions';
+import {signUpDetails} from '../../selectors/AuthSelectors';
 
 const props = {};
-export default class SignUpPage extends Component<props> {
+class SignUpPage extends Component<props> {
   loginService = null;
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.signUpService = new SignUpService();
   }
 
-  handleSignUp = () => {};
+  handleSignUp = () => {
+    this.signUpService.addUserAndSendOtp(
+      this.props.signUpDetails,
+      this.handleSignUpResponse,
+    );
+  };
+
+  handleSignUpResponse = (response) => {
+    Alert.alert(response.message);
+    this.props.addSignUpDetails({
+      emailId: '',
+      password: '',
+      fullName: '',
+      nickName: '',
+    });
+  };
 
   handleInputchange = (change) => {
-    this.setState(change);
+    this.props.addSignUpDetails(change);
   };
 
   render() {
+    const {
+      signUpDetails: {emailId, password, fullName, nickName},
+    } = this.props;
     return (
       <>
         <KeyboardAvoidingView
@@ -43,22 +67,26 @@ export default class SignUpPage extends Component<props> {
               style={commonStyles.inputField}
               handleOnChange={this.handleInputchange}
               name="emailId"
+              value={emailId}
             />
             <CustomTextInput
               placeholder="Password"
               secureTextEntry={true}
               handleOnChange={this.handleInputchange}
               name="password"
+              value={password}
             />
             <CustomTextInput
               placeholder="Full Name"
               handleOnChange={this.handleInputchange}
-              name="password"
+              name="fullName"
+              value={fullName}
             />
             <CustomTextInput
-              placeholder="OTP"
+              placeholder="Nick Name"
               handleOnChange={this.handleInputchange}
-              name="password"
+              name="nickName"
+              value={nickName}
             />
             <CustomButton label="SignUp" handleOnPress={this.handleSignUp} />
             <View style={styles.loginText}>
@@ -74,6 +102,12 @@ export default class SignUpPage extends Component<props> {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => ({
+  signUpDetails: signUpDetails(state),
+});
+
+export default connect(mapStateToProps, {addSignUpDetails})(SignUpPage);
 
 const styles = StyleSheet.create({
   mainContainer: {

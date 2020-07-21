@@ -1,0 +1,6 @@
+export const AuthTypes = {
+  LOGGED_IN: 'LOGGED_IN',
+  AUTH_DETAILS: 'AUTH_DETAILS',
+  LOADER: 'LOADER',
+  SIGNUP_DETAILS: 'SIGNUP_DETAILS',
+};

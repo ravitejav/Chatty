@@ -5,38 +5,70 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
 import CustomButton from '../CommonComponents/CustomButton';
 import CustomTextInput from '../CommonComponents/CustomTextInput';
 
 import LoginService from '../../services/LoginService';
+import {
+  userLoggedIN,
+  addLoginDetails,
+  setLoader,
+} from './../../redux/Auth/actions';
+import {authDeatils} from './../../selectors/AuthSelectors';
 
 const props = {};
-export default class LoginPage extends Component<props> {
-  loginService = null;
+class LoginPage extends Component<props> {
+  // loginService = null;
 
   constructor(props) {
     super(props);
     this.loginService = new LoginService();
-    this.state = {
-      emailId: '',
-      password: '',
-    };
+  }
+
+  UNSAFE_componentWillMount() {
+    const {
+      authDetails: {emailId, password} = {},
+      userLoggedIN,
+      setLoader,
+    } = this.props;
+    if (emailId && password) {
+      setLoader(true);
+      this.loginService.loginWithEmail(
+        emailId,
+        password,
+        userLoggedIN,
+        setLoader,
+      );
+    }
   }
 
   handleLogin = () => {
-    const {emailId, password} = this.state;
-    const loginResponse = this.loginService.loginWithEmail(emailId, password);
+    const {
+      authDetails: {emailId, password},
+      userLoggedIN,
+      setLoader,
+    } = this.props;
+
+    this.loginService.loginWithEmail(
+      emailId,
+      password,
+      userLoggedIN,
+      setLoader,
+    );
   };
 
   handleInputchange = (change) => {
-    this.setState(change);
+    this.props.addLoginDetails(change);
   };
 
   render() {
+    const {authDeatils: {emailId, password} = {}} = this.props;
+
     return (
       <>
         <View style={styles.mainContainer}>
@@ -49,19 +81,21 @@ export default class LoginPage extends Component<props> {
               style={commonStyles.inputField}
               handleOnChange={this.handleInputchange}
               name="emailId"
+              value={emailId}
             />
             <CustomTextInput
               placeholder="Password"
               secureTextEntry={true}
               handleOnChange={this.handleInputchange}
               name="password"
+              value={password}
             />
             <CustomButton label="Login" handleOnPress={this.handleLogin} />
             <View style={styles.signUp}>
-              <Text style={styles.signUpText}>New User? </Text>
+              <Text>New User? </Text>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('signupPage')}>
-                <Text style={styles.signUpText}>SignUp</Text>
+                <Text style={styles.signUpText}>SignUp Now!</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -87,6 +121,18 @@ export default class LoginPage extends Component<props> {
   }
 }
 
+const mapStateToProps = (state, ownProps) => {
+  return {
+    authDetails: authDeatils(state),
+  };
+};
+
+export default connect(mapStateToProps, {
+  userLoggedIN,
+  addLoginDetails,
+  setLoader,
+})(LoginPage);
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -102,11 +148,11 @@ const styles = StyleSheet.create({
     }),
   },
   appTile: {
-    flex: 0.3,
+    flex: 0.25,
     position: 'relative',
   },
   inputFields: {
-    flex: 0.45,
+    flex: 0.5,
     flexDirection: 'column',
     paddingTop: '25%',
   },
@@ -139,7 +185,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   signUpText: {
-    fontSize: percentToVal(2),
     color: 'blue',
   },
 });

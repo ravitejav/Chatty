@@ -14,4 +14,4 @@ export default () => {
       <Stack.Screen name="signupPage" component={SignUpPage} />
     </Stack.Navigator>
   );
-}
+};
