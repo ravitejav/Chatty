@@ -28,4 +28,7 @@ export default class Firebase {
     return this.fireApp.auth();
   }
 
+  users(): firebase.database.Reference {
+    return this.fireApp.database().ref('users');
+  }
 }

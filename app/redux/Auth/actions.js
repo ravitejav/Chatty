@@ -23,9 +23,14 @@ export const setLoader = (toggle) => {
   };
 };
 
-export const addSignUpDetails = changes => {
+export const addSignUpDetails = (changes) => {
   return {
     type: AuthTypes.SIGNUP_DETAILS,
     payload: changes,
   };
 };
+
+export const logOut = () => ({
+  type: AuthTypes.LOGGED_OUT,
+  payload: {},
+});

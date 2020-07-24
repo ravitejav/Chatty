@@ -1,6 +1,6 @@
 import {AuthTypes} from './type';
 
-const initalState = {loginStatus: false};
+const initalState = {userDetails: {loggedIn: false, emailVerified: false}};
 
 export const authReducer = function (state = initalState, action) {
   switch (action.type) {
@@ -11,6 +11,12 @@ export const authReducer = function (state = initalState, action) {
           ...state.userDetails,
           ...action.payload,
         },
+      };
+    case AuthTypes.LOGGED_OUT:
+      return {
+        ...state,
+        userDetails: {},
+        authDetails: {},
       };
     case AuthTypes.AUTH_DETAILS:
       return {

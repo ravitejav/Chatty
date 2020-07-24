@@ -24,6 +24,9 @@ export default class LoginService {
             nickName: results.user.displayName.split('##')[1],
           },
         });
+        if (!results.user.emailVerified) {
+          alert('please Verify you email');
+        }
         setLoader(false);
       })
       .catch((error) => {
@@ -31,4 +34,8 @@ export default class LoginService {
         Alert.alert(error.message);
       });
   }
+
+  logout = () => {
+    return this.auth.signOut();
+  };
 }

@@ -3,100 +3,96 @@ import {
   View,
   Text,
   StyleSheet,
-  Platform,
   TouchableOpacity,
-  Alert,
+  ScrollView,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
+import Contacts from './Contacts';
 
 import LoginService from '../../services/LoginService';
 
-const props = {};
-export default class LoginPage extends Component<props> {
-  loginService = null;
+import {logOut} from '../../redux/Auth/actions';
 
+const props = {};
+class DashBoard extends Component<props> {
   constructor(props) {
     super(props);
     this.loginService = new LoginService();
-    this.state = {
-      emailId: '',
-      password: '',
-    };
   }
 
-  handleLogin = () => {
-    const {emailId, password} = this.state;
-    const loginResponse = this.loginService.loginWithEmail(emailId, password);
+  onContactSelect = () => {
+    alert('SlectedContact');
   };
 
-  handleInputchange = (change) => {
-    this.setState(change);
+  handleLogout = () => {
+    this.loginService
+      .logout()
+      .then((response) => {
+        this.props.logOut();
+      })
+      .catch((error) => {
+        alert('Failed to signout try again');
+      });
   };
 
   render() {
     return (
-      <>
-        <View style={styles.mainContainer}>
-          <Text>Hello World!!</Text>
+      <View style={styles.mainContainer}>
+        <ScrollView style={styles.contacts}>
+          <Contacts onContactSelect={this.onContactSelect} />
+        </ScrollView>
+        <View style={styles.bottomBar}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('addFriend')}
+            style={styles.bottomBarElements}>
+            <Icon name="user-plus" size={18} />
+            <Text>Add Friend</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => alert('edit')}
+            style={styles.bottomBarElements}>
+            <Icon name="user-edit" size={18} />
+            <Text>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.handleLogout()}
+            style={styles.bottomBarElements}>
+            <Icon name="sign-in-alt" size={18} />
+            <Text>LogOut</Text>
+          </TouchableOpacity>
         </View>
-      </>
+      </View>
     );
   }
 }
 
+export default connect(() => ({}), {logOut})(DashBoard);
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    height: '100%',
+    width: '100%',
+    flexDirection: 'column',
   },
-  appName: {
+  bottomBar: {
+    flex: 1,
     position: 'absolute',
     bottom: 0,
-    alignSelf: 'center',
-    fontSize: percentToVal(6),
-    fontFamily: Platform.select({
-      ios: 'Arial',
-      android: 'Roboto',
-    }),
-  },
-  appTile: {
-    flex: 0.25,
-    position: 'relative',
-  },
-  inputFields: {
-    flex: 0.5,
-    flexDirection: 'column',
-    paddingTop: '25%',
-  },
-  otherLoginOptions: {
-    flex: 0.25,
-    position: 'relative',
-  },
-  orLine: {
-    flexDirection: 'row',
-    height: percentToVal(5),
-    justifyContent: 'space-around',
-    paddingHorizontal: percentToVal(2),
-  },
-  line: {
-    flex: 0.43,
-    borderWidth: 1,
-    height: 1,
-    marginVertical: percentToVal(0.5),
-    borderColor: '#000',
-  },
-  otherOptions: {
-    top: 0,
-    right: '42%',
-    position: 'absolute',
-  },
-  signUp: {
-    alignSelf: 'flex-end',
-    marginBottom: percentToVal(1),
-    marginRight: percentToVal(1),
+    display: 'flex',
     flexDirection: 'row',
   },
-  signUpText: {
-    color: 'blue',
+  bottomBarElements: {
+    flex: 1,
+    padding: percentToVal(2),
+    borderWidth: 0.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contacts: {
+    flex: 8,
   },
 });

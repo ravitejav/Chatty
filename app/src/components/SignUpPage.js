@@ -15,7 +15,7 @@ import CustomTextInput from '../CommonComponents/CustomTextInput';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import SignUpService from '../../services/SignUpService';
 
-import {addSignUpDetails} from './../../redux/Auth/actions';
+import {addSignUpDetails, setLoader} from './../../redux/Auth/actions';
 import {signUpDetails} from '../../selectors/AuthSelectors';
 
 const props = {};
@@ -28,6 +28,7 @@ class SignUpPage extends Component<props> {
   }
 
   handleSignUp = () => {
+    this.props.setLoader(true);
     this.signUpService.addUserAndSendOtp(
       this.props.signUpDetails,
       this.handleSignUpResponse,
@@ -35,8 +36,10 @@ class SignUpPage extends Component<props> {
   };
 
   handleSignUpResponse = (response) => {
+    const {setLoader, addSignUpDetails} = this.props;
     Alert.alert(response.message);
-    this.props.addSignUpDetails({
+    setLoader(false);
+    addSignUpDetails({
       emailId: '',
       password: '',
       fullName: '',
@@ -107,7 +110,9 @@ const mapStateToProps = (state, ownProps) => ({
   signUpDetails: signUpDetails(state),
 });
 
-export default connect(mapStateToProps, {addSignUpDetails})(SignUpPage);
+export default connect(mapStateToProps, {addSignUpDetails, setLoader})(
+  SignUpPage,
+);
 
 const styles = StyleSheet.create({
   mainContainer: {

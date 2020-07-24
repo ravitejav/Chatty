@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import {commonStyles} from './../styles/CommonStyles';
 
-export default class CustomButton extends Component {
+export default class CustomTextInput extends Component {
   static propTypes = {
     style: PropTypes.object,
     handleOnChange: PropTypes.func,

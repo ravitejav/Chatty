@@ -14,13 +14,16 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import StackNavigator from './app/src/components/navigator/LoginContainer';
+import LoginNavigator from './app/src/components/navigator/LoginContainer';
+import DashBoardNavigator from './app/src/components/navigator/DashBoardContainer';
 import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
-import {loader} from './app/selectors/AuthSelectors';
-import {percentToVal} from './app/src/styles/CommonStyles';
+import {loader, userDetails} from './app/selectors/AuthSelectors';
 
 const App: () => React$Node = (props) => {
+  const {
+    userDetails: {loggedIn, emailVerified},
+  } = props;
   return (
     <>
       <StatusBar barStyle="dark-content" hidden={false} translucent={true} />
@@ -32,7 +35,8 @@ const App: () => React$Node = (props) => {
           style={props.loader ? styles.activity : {display: 'none'}}
         />
         <NavigationContainer>
-          <StackNavigator />
+          {loggedIn && emailVerified && <DashBoardNavigator />}
+          {(!loggedIn || !emailVerified) && <LoginNavigator />}
         </NavigationContainer>
       </SafeAreaView>
     </>
@@ -61,4 +65,5 @@ const styles = StyleSheet.create({
 
 export default connect((state, ownprops) => ({
   loader: loader(state),
+  userDetails: userDetails(state),
 }))(App);

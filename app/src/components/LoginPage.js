@@ -19,7 +19,8 @@ import {
   addLoginDetails,
   setLoader,
 } from './../../redux/Auth/actions';
-import {authDeatils} from './../../selectors/AuthSelectors';
+import {authDeatils, userDetails} from './../../selectors/AuthSelectors';
+import {isEmpty} from 'ramda';
 
 const props = {};
 class LoginPage extends Component<props> {
@@ -35,8 +36,9 @@ class LoginPage extends Component<props> {
       authDetails: {emailId, password} = {},
       userLoggedIN,
       setLoader,
+      user: {loggedIn, emailVerified},
     } = this.props;
-    if (emailId && password) {
+    if (loggedIn && emailVerified) {
       setLoader(true);
       this.loginService.loginWithEmail(
         emailId,
@@ -124,6 +126,7 @@ class LoginPage extends Component<props> {
 const mapStateToProps = (state, ownProps) => {
   return {
     authDetails: authDeatils(state),
+    user: userDetails(state),
   };
 };
 
