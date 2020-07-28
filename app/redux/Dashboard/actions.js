@@ -9,3 +9,8 @@ export const addFriendToContactList = (friend) => ({
   type: dashboardActions.ADD_FRIEND,
   payload: {friend},
 });
+
+export const resetFriendList = () => ({
+  type: dashboardActions.RESET_FRIEND_LIST,
+  payload: {},
+});

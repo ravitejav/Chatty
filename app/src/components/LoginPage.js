@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
@@ -19,8 +12,8 @@ import {
   addLoginDetails,
   setLoader,
 } from './../../redux/Auth/actions';
+import {addFriendToContactList} from '../../redux/Dashboard/actions';
 import {authDeatils, userDetails} from './../../selectors/AuthSelectors';
-import {isEmpty} from 'ramda';
 
 const props = {};
 class LoginPage extends Component<props> {
@@ -36,6 +29,7 @@ class LoginPage extends Component<props> {
       authDetails: {emailId, password} = {},
       userLoggedIN,
       setLoader,
+      addFriendToContactList,
       user: {loggedIn, emailVerified},
     } = this.props;
     if (loggedIn && emailVerified) {
@@ -45,6 +39,7 @@ class LoginPage extends Component<props> {
         password,
         userLoggedIN,
         setLoader,
+        addFriendToContactList,
       );
     }
   }
@@ -54,6 +49,7 @@ class LoginPage extends Component<props> {
       authDetails: {emailId, password},
       userLoggedIN,
       setLoader,
+      addFriendToContactList,
     } = this.props;
 
     this.loginService.loginWithEmail(
@@ -61,6 +57,7 @@ class LoginPage extends Component<props> {
       password,
       userLoggedIN,
       setLoader,
+      addFriendToContactList,
     );
   };
 
@@ -134,6 +131,7 @@ export default connect(mapStateToProps, {
   userLoggedIN,
   addLoginDetails,
   setLoader,
+  addFriendToContactList,
 })(LoginPage);
 
 const styles = StyleSheet.create({

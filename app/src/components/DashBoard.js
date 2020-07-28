@@ -11,10 +11,10 @@ import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
 import Contacts from './Contacts';
-
+import {contactSelector} from '../../selectors/SearchSelector';
 import LoginService from '../../services/LoginService';
-
 import {logOut} from '../../redux/Auth/actions';
+import { resetFriendList } from "../../redux/Dashboard/actions";
 
 const props = {};
 class DashBoard extends Component<props> {
@@ -32,6 +32,7 @@ class DashBoard extends Component<props> {
       .logout()
       .then((response) => {
         this.props.logOut();
+        this.props.resetFriendList();
       })
       .catch((error) => {
         alert('Failed to signout try again');
@@ -42,7 +43,10 @@ class DashBoard extends Component<props> {
     return (
       <View style={styles.mainContainer}>
         <ScrollView style={styles.contacts}>
-          <Contacts onContactSelect={this.onContactSelect} />
+          <Contacts
+            contacts={this.props.contacts}
+            onContactSelect={this.onContactSelect}
+          />
         </ScrollView>
         <View style={styles.bottomBar}>
           <TouchableOpacity
@@ -69,7 +73,11 @@ class DashBoard extends Component<props> {
   }
 }
 
-export default connect(() => ({}), {logOut})(DashBoard);
+const mapStateToProps = (state, ownProps) => ({
+  contacts: contactSelector(state, {}),
+});
+
+export default connect(mapStateToProps, {logOut, resetFriendList})(DashBoard);
 
 const styles = StyleSheet.create({
   mainContainer: {

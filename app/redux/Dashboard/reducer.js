@@ -1,6 +1,8 @@
 import {dashboardActions} from './types';
 
-const initalState = {};
+const initalState = {
+  friendList: [],
+};
 
 export const dashboardReducer = function (state = initalState, action) {
   switch (action.type) {
@@ -15,7 +17,12 @@ export const dashboardReducer = function (state = initalState, action) {
     case dashboardActions.ADD_FRIEND:
       return {
         ...state,
-        friendList: [...(state.friendList = []), action.payload.friend],
+        friendList: [...state.friendList, action.payload.friend],
+      };
+    case dashboardActions.RESET_FRIEND_LIST:
+      return {
+        ...state,
+        friendList: [],
       };
     default:
       return state;

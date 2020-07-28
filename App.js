@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -19,29 +19,71 @@ import DashBoardNavigator from './app/src/components/navigator/DashBoardContaine
 import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import {loader, userDetails} from './app/selectors/AuthSelectors';
+import {contactSelector} from './app/selectors/SearchSelector';
+import FriendService from './app/services/FriendSerivce';
+import {addFriendToContactList} from './app/redux/Dashboard/actions';
+import {fromEmailToId} from './app/services/Transformer';
 
-const App: () => React$Node = (props) => {
-  const {
-    userDetails: {loggedIn, emailVerified},
-  } = props;
-  return (
-    <>
-      <StatusBar barStyle="dark-content" hidden={false} translucent={true} />
-      <SafeAreaView style={styles.safeArea}>
-        <ActivityIndicator
-          size="large"
-          color="#000000"
-          animating={props.loader}
-          style={props.loader ? styles.activity : {display: 'none'}}
-        />
-        <NavigationContainer>
-          {loggedIn && emailVerified && <DashBoardNavigator />}
-          {(!loggedIn || !emailVerified) && <LoginNavigator />}
-        </NavigationContainer>
-      </SafeAreaView>
-    </>
-  );
-};
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.friendService = new FriendService();
+  }
+
+  componentDidMount() {
+    const {
+      userDetails: {userDetails: {email} = {}, loggedIn, emailVerified} = {},
+    } = this.props;
+    if (loggedIn && emailVerified) {
+      this.friendService.getAllFriends(
+        fromEmailToId(email),
+        this.friendHandler,
+      );
+    }
+  }
+
+  friendHandler = (friend) => {
+    const {
+      addFriendToContactList,
+      contacts,
+      userDetails: {loggedIn, emailVerified} = {},
+    } = this.props;
+    if (
+      !(
+        contacts.filter((contact) => contact.emailId === friend.emailId)
+          .length > 0
+      ) &&
+      loggedIn &&
+      emailVerified
+    ) {
+      addFriendToContactList(friend);
+    }
+  };
+
+  render() {
+    const {
+      userDetails: {loggedIn, emailVerified},
+      loader,
+    } = this.props;
+    return (
+      <>
+        <StatusBar barStyle="dark-content" hidden={false} translucent={true} />
+        <SafeAreaView style={styles.safeArea}>
+          <ActivityIndicator
+            size="large"
+            color="#000000"
+            animating={loader}
+            style={loader ? styles.activity : {display: 'none'}}
+          />
+          <NavigationContainer>
+            {loggedIn && emailVerified && <DashBoardNavigator />}
+            {(!loggedIn || !emailVerified) && <LoginNavigator />}
+          </NavigationContainer>
+        </SafeAreaView>
+      </>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -63,7 +105,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect((state, ownprops) => ({
-  loader: loader(state),
-  userDetails: userDetails(state),
-}))(App);
+export default connect(
+  (state, ownprops) => ({
+    contacts: contactSelector(state, {}),
+    loader: loader(state),
+    userDetails: userDetails(state),
+  }),
+  {addFriendToContactList},
+)(App);
