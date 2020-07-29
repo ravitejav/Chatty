@@ -5,6 +5,7 @@ import {percentToVal} from '../../styles/CommonStyles';
 
 import DashBaord from '../DashBoard';
 import AddFriend from '../AddFriend';
+import EditProfile from '../EditProfile';
 
 const Stack = createStackNavigator();
 
@@ -21,7 +22,7 @@ export default () => {
         name="dashboard"
         component={DashBaord}
         options={{
-          title: 'Chat Board',
+          title: 'Chatty',
           headerStyle: {backgroundColor: '#60B2FF', height: percentToVal(8)},
           headerTitleStyle: {fontWeight: 'bold', fontSize: percentToVal(4)},
           headerTitleAlign: 'left',
@@ -34,6 +35,18 @@ export default () => {
         component={AddFriend}
         options={{
           title: 'Add Friend',
+          headerStyle: {backgroundColor: '#60B2FF', height: percentToVal(8)},
+          headerTitleStyle: {fontWeight: 'bold', fontSize: percentToVal(4)},
+          headerTitleAlign: 'center',
+          headerTintColor: '#121212',
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen
+        name="editProfile"
+        component={EditProfile}
+        options={{
+          title: 'Edit Profile',
           headerStyle: {backgroundColor: '#60B2FF', height: percentToVal(8)},
           headerTitleStyle: {fontWeight: 'bold', fontSize: percentToVal(4)},
           headerTitleAlign: 'center',

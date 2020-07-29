@@ -10,6 +10,10 @@ export const authReducer = function (state = initalState, action) {
         userDetails: {
           ...state.userDetails,
           ...action.payload,
+          userDetails: {
+            ...state.userDetails.userDetails,
+            ...action.payload.userDetails,
+          },
         },
       };
     case AuthTypes.LOGGED_OUT:

@@ -42,12 +42,12 @@ class DashBoard extends Component<props> {
   render() {
     return (
       <View style={styles.mainContainer}>
-        <ScrollView style={styles.contacts}>
+        <View style={styles.contacts}>
           <Contacts
             contacts={this.props.contacts}
             onContactSelect={this.onContactSelect}
           />
-        </ScrollView>
+        </View>
         <View style={styles.bottomBar}>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('addFriend')}
@@ -56,7 +56,7 @@ class DashBoard extends Component<props> {
             <Text>Add Friend</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => alert('edit')}
+            onPress={() => this.props.navigation.navigate('editProfile')}
             style={styles.bottomBarElements}>
             <Icon name="user-edit" size={18} />
             <Text>Edit Profile</Text>
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flexDirection: 'column',
+    display: 'flex',
   },
   bottomBar: {
     flex: 1,
@@ -101,6 +102,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contacts: {
-    flex: 8,
+    flex: 0.90,
   },
 });

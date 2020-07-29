@@ -11,6 +11,7 @@ export default class CustomTextInput extends Component {
     handleOnChange: PropTypes.func,
     placeholder: PropTypes.string,
     name: PropTypes.string,
+    readOnly: PropTypes.bool,
   };
 
   constructor(props) {
@@ -23,12 +24,13 @@ export default class CustomTextInput extends Component {
   };
 
   render() {
-    const {style = {}, placeholder = ''} = this.props;
+    const {style = {}, placeholder = '', readOnly = false} = this.props;
     return (
       <TextInput
         placeholder={placeholder}
         onChangeText={(text) => this.handleInputTextChange(text)}
         style={{...commonStyles.inputField, ...style}}
+        editable={!readOnly}
         {...this.props}
       />
     );

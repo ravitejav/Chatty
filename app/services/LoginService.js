@@ -7,7 +7,9 @@ import {fromEmailToId} from './Transformer';
 
 export default class LoginService {
   constructor() {
-    this.auth = new FireBase().auth();
+    this.firebase = new FireBase();
+    this.auth = this.firebase.auth();
+    this.db = this.firebase.database();
     this.friendService = new FriendService();
   }
 
@@ -21,26 +23,40 @@ export default class LoginService {
     this.auth
       .signInWithEmailAndPassword(email, password)
       .then((results) => {
-        userLoggedIN({
-          loggedIn: true,
-          emailVerified: results.user.emailVerified,
-          userDetails: {
-            ...pickAll(
-              ['displayName', 'photoURL', 'email', 'emailVerified'],
-              results.user,
-            ),
-            fullName: results.user.displayName.split('##')[0],
-            nickName: results.user.displayName.split('##')[1],
-          },
-        });
-        this.friendService.getAllFriends(
-          fromEmailToId(email),
-          addFriendToContactList,
-        );
-        if (!results.user.emailVerified) {
-          alert('please Verify you email');
-        }
-        setLoader(false);
+        this.db
+          .ref('/users/' + fromEmailToId(email))
+          .once('value')
+          .then((res) => {
+            userLoggedIN({
+              loggedIn: true,
+              emailVerified: results.user.emailVerified,
+              userDetails: {
+                ...pickAll(
+                  [
+                    'displayName',
+                    'photoURL',
+                    'email',
+                    'emailVerified',
+                    'photoURL',
+                  ],
+                  results.user,
+                ),
+                fullName: res.val().fullName,
+                nickName: res.val().nickName,
+              },
+            });
+            this.friendService.getAllFriends(
+              fromEmailToId(email),
+              addFriendToContactList,
+            );
+            if (!results.user.emailVerified) {
+              Alert.alert('please Verify you email');
+            }
+            setLoader(false);
+          })
+          .catch((error) => {
+            Alert.alert('Something went wrong while signup');
+          });
       })
       .catch((error) => {
         setLoader(false);

@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 
 import {commonStyles, percentToVal} from '../styles/CommonStyles';
 import {userDetails} from '../../selectors/AuthSelectors';
+import {FlatList} from 'react-native-gesture-handler';
 
 const props = {};
 class Contacts extends Component<props> {
@@ -18,21 +19,30 @@ class Contacts extends Component<props> {
     super(props);
   }
 
+  renderItem = ({item, index}) => {
+    const {onContactSelect} = this.props;
+    return (
+      <TouchableOpacity
+        style={styles.userContainer}
+        key={index}
+        onPress={() => onContactSelect(item, index)}>
+        <Text style={styles.name}>
+          {item.fullName}({item.nickName})
+        </Text>
+        <Text style={styles.email}>{item.emailId}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     const {contacts = [], onContactSelect} = this.props;
     return (
       <View style={styles.mainContainer}>
-        {contacts.map((contact, i) => (
-          <TouchableOpacity
-            key={i}
-            style={styles.userContainer}
-            onPress={() => onContactSelect(contact, i)}>
-            <Text style={styles.name}>
-              {contact.fullName}({contact.nickName})
-            </Text>
-            <Text style={styles.email}>{contact.emailId}</Text>
-          </TouchableOpacity>
-        ))}
+        <FlatList
+          data={contacts}
+          renderItem={this.renderItem}
+          keyExtractor={(contact) => contact.emailId}
+        />
       </View>
     );
   }

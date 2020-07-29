@@ -1,6 +1,8 @@
 import FireBase from './firebase/Firebase';
 
 import {fromEmailToId} from './Transformer';
+import {Alert} from 'react-native';
+import {isNil, isEmpty} from 'ramda';
 
 export default class SignUpService {
   constructor() {
@@ -17,7 +19,7 @@ export default class SignUpService {
             this.db
               .ref('/users/')
               .child(fromEmailToId(emailId))
-              .set({emailId, fullName, nickName, friends: {}})
+              .set({emailId, fullName, nickName, friends: {}, photoURL: ''})
               .then()
               .catch();
             responseHandler({
@@ -53,4 +55,40 @@ export default class SignUpService {
       displayName: fullName + '##' + nickName,
     });
   }
+
+  updateDetails = (
+    {email, fullName, nickName, password},
+    loader,
+    updateUser,
+  ) => {
+    loader(true);
+    Promise.all([
+      this.updateUser(fullName, nickName),
+      this.db
+        .ref('/users/' + fromEmailToId(email))
+        .update({fullName, nickName}),
+      !(isNil(password) || isEmpty(password))
+        ? this.newPasswordMail(password)
+        : this.demoResolve,
+    ])
+      .then(() => {
+        loader(false);
+        Alert.alert('Details Updated Successfully.');
+        updateUser({fullName, nickName, userDetails: {fullName, nickName}});
+      })
+      .catch((error) => {
+        loader(false);
+        Alert.alert('Error occured while updating details.');
+      });
+  };
+
+  newPasswordMail = (password) => {
+    return this.auth.currentUser.updatePassword(password);
+  };
+
+  demoResolve = () => {
+    return new Promise((resolve, resject) => {
+      resolve('resolved');
+    });
+  };
 }
