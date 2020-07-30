@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import {authReducer} from '../redux/Auth/reducer';
 import {dashboardReducer} from '../redux/Dashboard/reducer';
+import {messageReducer} from '../redux/Messages/reducer';
 
 const basePersistConfig = {
   storage: AsyncStorage,
@@ -21,12 +22,18 @@ const dashboardConfig = {
   key: 'dashboard',
 };
 
+const messageConfig = {
+  ...basePersistConfig,
+  key: 'message',
+};
+
 const middleware = [thunk];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducers = combineReducers({
   auth: persistReducer(authConfig, authReducer),
   dashboard: persistReducer(dashboardConfig, dashboardReducer),
+  messages: persistReducer(messageConfig, messageReducer),
 });
 
 export const store = createStore(

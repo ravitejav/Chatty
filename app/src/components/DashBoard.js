@@ -1,20 +1,18 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {connect} from 'react-redux';
 
-import {commonStyles, percentToVal} from '../styles/CommonStyles';
+import {percentToVal} from '../styles/CommonStyles';
 import Contacts from './Contacts';
 import {contactSelector} from '../../selectors/SearchSelector';
 import LoginService from '../../services/LoginService';
 import {logOut} from '../../redux/Auth/actions';
-import { resetFriendList } from "../../redux/Dashboard/actions";
+import {resetFriendList} from '../../redux/Dashboard/actions';
+import {
+  setCurentContact,
+  removeCurrentContact,
+} from '../../redux/Messages/actions';
 
 const props = {};
 class DashBoard extends Component<props> {
@@ -23,8 +21,9 @@ class DashBoard extends Component<props> {
     this.loginService = new LoginService();
   }
 
-  onContactSelect = () => {
-    alert('SlectedContact');
+  onContactSelect = (item, index) => {
+    this.props.setCurentContact({...item});
+    this.props.navigation.navigate('messageContainer');
   };
 
   handleLogout = () => {
@@ -77,7 +76,12 @@ const mapStateToProps = (state, ownProps) => ({
   contacts: contactSelector(state, {}),
 });
 
-export default connect(mapStateToProps, {logOut, resetFriendList})(DashBoard);
+export default connect(mapStateToProps, {
+  logOut,
+  resetFriendList,
+  setCurentContact,
+  removeCurrentContact,
+})(DashBoard);
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -102,6 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contacts: {
-    flex: 0.90,
+    flex: 0.9,
   },
 });

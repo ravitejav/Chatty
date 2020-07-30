@@ -6,6 +6,7 @@ import {percentToVal} from '../../styles/CommonStyles';
 import DashBaord from '../DashBoard';
 import AddFriend from '../AddFriend';
 import EditProfile from '../EditProfile';
+import MessagesContainer from '../MessagesContainer';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,17 @@ export default () => {
           headerStyle: {backgroundColor: '#60B2FF', height: percentToVal(8)},
           headerTitleStyle: {fontWeight: 'bold', fontSize: percentToVal(4)},
           headerTitleAlign: 'center',
+          headerTintColor: '#121212',
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen
+        name="messageContainer"
+        component={MessagesContainer}
+        options={{
+          headerStyle: {backgroundColor: '#60B2FF', height: percentToVal(8)},
+          headerTitleStyle: {fontWeight: 'bold', fontSize: percentToVal(3)},
+          headerTitleAlign: 'left',
           headerTintColor: '#121212',
           headerBackTitle: '',
         }}

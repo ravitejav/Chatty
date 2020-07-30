@@ -1,15 +1,8 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 
-import {commonStyles, percentToVal} from '../styles/CommonStyles';
+import {percentToVal} from '../styles/CommonStyles';
 import {userDetails} from '../../selectors/AuthSelectors';
 import {FlatList} from 'react-native-gesture-handler';
 
@@ -35,7 +28,7 @@ class Contacts extends Component<props> {
   };
 
   render() {
-    const {contacts = [], onContactSelect} = this.props;
+    const {contacts = []} = this.props;
     return (
       <View style={styles.mainContainer}>
         <FlatList
