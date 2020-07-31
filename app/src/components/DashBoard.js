@@ -9,6 +9,7 @@ import {contactSelector} from '../../selectors/SearchSelector';
 import LoginService from '../../services/LoginService';
 import {logOut} from '../../redux/Auth/actions';
 import {resetFriendList} from '../../redux/Dashboard/actions';
+import {resetMessages} from '../../redux/Messages/actions';
 import {
   setCurentContact,
   removeCurrentContact,
@@ -32,6 +33,7 @@ class DashBoard extends Component<props> {
       .then((response) => {
         this.props.logOut();
         this.props.resetFriendList();
+        this.props.resetMessages();
       })
       .catch((error) => {
         alert('Failed to signout try again');
@@ -81,6 +83,7 @@ export default connect(mapStateToProps, {
   resetFriendList,
   setCurentContact,
   removeCurrentContact,
+  resetMessages,
 })(DashBoard);
 
 const styles = StyleSheet.create({

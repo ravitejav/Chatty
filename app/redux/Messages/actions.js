@@ -9,3 +9,15 @@ export const removeCurrentContact = () => ({
   type: messageTypes.REMOVE_CURRENT_CONTACT,
   payload: {},
 });
+
+export const addMessage = (messagePath, messagePayload) => ({
+  type: messageTypes.ADD_MESSAGE,
+  payload: {
+    messagePath,
+    message: messagePayload,
+  },
+});
+
+export const resetMessages = () => ({
+  type: messageTypes.RESET_MESSAGES,
+});

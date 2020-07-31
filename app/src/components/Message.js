@@ -10,14 +10,14 @@ class Message extends Component<props> {
   }
 
   render() {
-    const {sentByMe} = this.props;
+    const {sentByMe, message = ''} = this.props;
     return (
       <View
         style={[
           styles.mainContainer,
           sentByMe ? styles.sentbyMe : styles.sentByFriend,
         ]}>
-        <Text style={styles.message}>Hello world</Text>
+        <Text style={styles.message}>{message}</Text>
       </View>
     );
   }

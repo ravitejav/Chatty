@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, ScrollView, StyleSheet, Alert} from 'react-native';
 import {connect} from 'react-redux';
 
-import {commonStyles, percentToVal} from '../styles/CommonStyles';
+import {commonStyles} from '../styles/CommonStyles';
 import CustomTextInput from '../CommonComponents/CustomTextInput';
 import CustomButton from '../CommonComponents/CustomButton';
 import Contacts from './Contacts';
@@ -11,7 +11,10 @@ import {
   setSearchContext,
   addFriendToContactList,
 } from '../../redux/Dashboard/actions';
-import {searchContextSelector} from './../../selectors/SearchSelector';
+import {
+  searchContextSelector,
+  contactSelector,
+} from './../../selectors/SearchSelector';
 import FriendService from './../../services/FriendSerivce';
 
 import {fromEmailToId} from './../../services/Transformer';
@@ -32,13 +35,24 @@ class AddFriend extends Component<props> {
   };
 
   handleSearchFriends = () => {
-    const {searchContext} = this.props;
+    const {
+      searchContext,
+      user: {
+        userDetails: {email},
+      },
+    } = this.props;
+    if (searchContext === email) {
+      Alert.alert('Please search valid');
+      return;
+    }
     const response = this.friendService.getFirends(
       fromEmailToId(searchContext),
     );
     response
       .then((results) => {
-        this.setState({contacts: [results.val()]});
+        results.val()
+          ? this.setState({contacts: [results.val()]})
+          : Alert.alert('No user found');
       })
       .catch((error) => {
         alert('No user found');
@@ -63,7 +77,15 @@ class AddFriend extends Component<props> {
         userDetails,
       },
       addFriendToContactList,
+      contacts,
     } = this.props;
+    if (
+      contacts.filter((contact) => contact.emailId === friend.emailId).length >
+      0
+    ) {
+      Alert.alert('Your friend is already added to your dashboard.');
+      return;
+    }
     this.friendService
       .updateFriendlist(email, friend)
       .then((results) => {
@@ -103,6 +125,7 @@ class AddFriend extends Component<props> {
 }
 
 const mapStateProps = (state, ownProps) => ({
+  contacts: contactSelector(state, {}),
   searchContext: searchContextSelector(state, ownProps),
   user: userDetails(state, {}),
 });

@@ -8,9 +8,7 @@ export default class FriendService {
   }
 
   getFirends(email) {
-    return this.db.ref('/users/' + email).once('value', (results) => {
-      return results.val();
-    });
+    return this.db.ref('/users/' + email).once('value');
   }
 
   updateFriendlist(email, friend) {
@@ -24,7 +22,7 @@ export default class FriendService {
       .set({[fromEmailToId(friend.emailId || friend.email)]: friend.fullName});
   }
 
-  getAllFriends(email, callBack) {
+  getAllFriends(email, friendCallBack, messageCallBack) {
     this.db
       .ref('/users/' + email + '/friends/')
       .once('value')
@@ -34,7 +32,7 @@ export default class FriendService {
             .ref('/users/' + emailId)
             .once('value')
             .then((res) => {
-              callBack(res.val());
+              friendCallBack(res.val());
             })
             .catch((err) => {
               //handle error

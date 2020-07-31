@@ -38,6 +38,11 @@ class App extends Component {
       this.friendService.getAllFriends(
         fromEmailToId(email),
         this.friendHandler,
+        this.messageHandler,
+      );
+      this.friendService.getNewFriends(
+        fromEmailToId(email),
+        this.friendHandler,
       );
     }
   }
@@ -59,6 +64,8 @@ class App extends Component {
       addFriendToContactList(friend);
     }
   };
+
+  messageHandler = (message) => {};
 
   render() {
     const {

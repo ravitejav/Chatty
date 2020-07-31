@@ -2,6 +2,7 @@ import {messageTypes} from './types';
 
 const initalState = {
   currentContact: undefined,
+  userMessages: {},
 };
 
 export const messageReducer = function (state = initalState, action) {
@@ -15,6 +16,22 @@ export const messageReducer = function (state = initalState, action) {
       return {
         ...state,
         currentContact: undefined,
+      };
+    case messageTypes.ADD_MESSAGE:
+      return {
+        ...state,
+        userMessages: {
+          ...state.userMessages,
+          [action.payload.messagePath]: [
+            ...(state.userMessages[action.payload.messagePath] || []),
+            action.payload.message,
+          ],
+        },
+      };
+    case messageTypes.RESET_MESSAGES:
+      return {
+        ...state,
+        userMessages: {},
       };
     default:
       return state;
