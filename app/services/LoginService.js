@@ -19,6 +19,7 @@ export default class LoginService {
     userLoggedIN,
     setLoader,
     addFriendToContactList,
+    addMessage,
   ) {
     this.auth
       .signInWithEmailAndPassword(email, password)
@@ -48,6 +49,7 @@ export default class LoginService {
             this.friendService.getAllFriends(
               fromEmailToId(email),
               addFriendToContactList,
+              addMessage,
             );
             if (!results.user.emailVerified) {
               Alert.alert('please Verify you email');

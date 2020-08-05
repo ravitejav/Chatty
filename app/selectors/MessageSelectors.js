@@ -12,3 +12,7 @@ export const messageSelector = (state, ownProps) => {
   const messagePath = messagesPath(user.email, currentContact.emailId);
   return pathOr([], ['messages', 'userMessages', messagePath], state);
 };
+
+export const allMessageSelector = (state, ownProps) => {
+  return pathOr(undefined, ['messages', 'userMessages'], state);
+};

@@ -8,7 +8,14 @@ export default class MessageService {
     this.db = new FireBase().database();
   }
 
-  getAllMessages(fromEmail, toEmail, messageCallBack) {
+  getAllMessages(from, contacts, messageCallBack) {
+    contacts.forEach((contact) => {
+      this.getAllMessagesFromUser(from, contact.emailId, messageCallBack);
+      this.getNewMessages(from, contact.emailId, messageCallBack);
+    });
+  }
+
+  getAllMessagesFromUser(fromEmail, toEmail, messageCallBack) {
     const messagePath = messagesPath(
       fromEmailToId(fromEmail),
       fromEmailToId(toEmail),
@@ -17,7 +24,9 @@ export default class MessageService {
       .ref('/messages/' + messagePath)
       .once('value')
       .then((messages) => {
-        console.log(messages.val());
+        if (messages.val()) {
+          messageCallBack(messagePath, messages.val());
+        }
       })
       .catch((error) => {
         Alert.alert('Something went wrong');
@@ -29,15 +38,11 @@ export default class MessageService {
       fromEmailToId(fromEmail),
       fromEmailToId(toEmail),
     );
-    this.db
-      .ref('/messages/' + messagePath)
-      .once('child_added')
-      .then((messages) => {
-        console.log(messages.val());
-      })
-      .catch((error) => {
-        Alert.alert('Something went wrong');
-      });
+    this.db.ref('/messages/' + messagePath).on('child_added', (messages) => {
+      if (messages.val()) {
+        messageCallBack(messagePath, {[messages.key]: messages.val()});
+      }
+    });
   }
 
   sendMessage(message, fromEmail, toEmail, addMessageInState) {
@@ -54,7 +59,7 @@ export default class MessageService {
       .ref('/messages/' + messagePath)
       .push(payload)
       .then((response) => {
-        addMessageInState(messagePath, payload);
+        addMessageInState(messagePath, {[response.key]: payload});
       })
       .catch((error) => {
         Alert.alert('Something went wrong');

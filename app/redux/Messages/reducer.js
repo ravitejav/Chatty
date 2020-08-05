@@ -22,10 +22,10 @@ export const messageReducer = function (state = initalState, action) {
         ...state,
         userMessages: {
           ...state.userMessages,
-          [action.payload.messagePath]: [
-            ...(state.userMessages[action.payload.messagePath] || []),
-            action.payload.message,
-          ],
+          [action.payload.messagePath]: {
+            ...(state.userMessages[action.payload.messagePath] || {}),
+            ...action.payload.message,
+          },
         },
       };
     case messageTypes.RESET_MESSAGES:

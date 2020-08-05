@@ -1,10 +1,12 @@
 import FireBase from './firebase/Firebase';
 
 import {fromEmailToId} from '../services/Transformer';
+import MessageService from './MessageService';
 
 export default class FriendService {
   constructor() {
     this.db = new FireBase().database();
+    this.messageService = new MessageService();
   }
 
   getFirends(email) {
@@ -33,6 +35,11 @@ export default class FriendService {
             .once('value')
             .then((res) => {
               friendCallBack(res.val());
+              this.messageService.getAllMessagesFromUser(
+                email,
+                fromEmailToId(res.val().emailId),
+                messageCallBack,
+              );
             })
             .catch((err) => {
               //handle error
@@ -44,25 +51,26 @@ export default class FriendService {
       });
   }
 
-  getNewFriends(email, callBack) {
+  getNewFriends(email, callBack, messageCallBack) {
     this.db
       .ref('/users/' + email + '/friends/')
-      .once('child_added')
-      .then((results) => {
+      .on('child_added', (results) => {
         Object.keys(results.val()).forEach((emailId) => {
           this.db
             .ref('/users/' + emailId)
             .once('value')
             .then((res) => {
               callBack(res.val());
+              this.messageService.getNewMessages(
+                email,
+                fromEmailToId(res.val().emailId),
+                messageCallBack,
+              );
             })
             .catch((err) => {
               //handle error
             });
         });
       })
-      .catch((error) => {
-        //handle error
-      });
   }
 }

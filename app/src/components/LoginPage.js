@@ -14,6 +14,7 @@ import {
 } from './../../redux/Auth/actions';
 import {addFriendToContactList} from '../../redux/Dashboard/actions';
 import {authDeatils, userDetails} from './../../selectors/AuthSelectors';
+import {addMessage} from '../../redux/Messages/actions';
 
 const props = {};
 class LoginPage extends Component<props> {
@@ -50,6 +51,7 @@ class LoginPage extends Component<props> {
       userLoggedIN,
       setLoader,
       addFriendToContactList,
+      addMessage,
     } = this.props;
 
     this.loginService.loginWithEmail(
@@ -58,6 +60,7 @@ class LoginPage extends Component<props> {
       userLoggedIN,
       setLoader,
       addFriendToContactList,
+      addMessage,
     );
   };
 
@@ -132,6 +135,7 @@ export default connect(mapStateToProps, {
   addLoginDetails,
   setLoader,
   addFriendToContactList,
+  addMessage,
 })(LoginPage);
 
 const styles = StyleSheet.create({

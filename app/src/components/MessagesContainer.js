@@ -70,7 +70,9 @@ class MessagesContainer extends Component {
         style={styles.mainContainer}>
         <View style={styles.mainContainer}>
           <FlatList
-            data={messages}
+            data={Object.keys(messages)
+              .map((messageKey) => messages[messageKey])
+              .sort((mes1, mes2) => mes1.at - mes2.at)}
             renderItem={this.renderMessage}
             keyExtractor={(message) => message.at.toString()}
           />

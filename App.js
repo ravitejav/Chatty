@@ -22,7 +22,10 @@ import {loader, userDetails} from './app/selectors/AuthSelectors';
 import {contactSelector} from './app/selectors/SearchSelector';
 import FriendService from './app/services/FriendSerivce';
 import {addFriendToContactList} from './app/redux/Dashboard/actions';
+import {addMessage} from './app/redux/Messages/actions';
 import {fromEmailToId} from './app/services/Transformer';
+import MessageService from './app/services/MessageService';
+import {allMessageSelector} from './app/selectors/MessageSelectors';
 
 class App extends Component {
   constructor(props) {
@@ -33,6 +36,7 @@ class App extends Component {
   componentDidMount() {
     const {
       userDetails: {userDetails: {email} = {}, loggedIn, emailVerified} = {},
+      contacts,
     } = this.props;
     if (loggedIn && emailVerified) {
       this.friendService.getAllFriends(
@@ -43,9 +47,15 @@ class App extends Component {
       this.friendService.getNewFriends(
         fromEmailToId(email),
         this.friendHandler,
+        this.messageHandler,
       );
     }
   }
+
+  messageHandler = (messagePath, message) => {
+    const {addMessage, allMessages} = this.props;
+    addMessage(messagePath, message);
+  };
 
   friendHandler = (friend) => {
     const {
@@ -64,8 +74,6 @@ class App extends Component {
       addFriendToContactList(friend);
     }
   };
-
-  messageHandler = (message) => {};
 
   render() {
     const {
@@ -117,6 +125,7 @@ export default connect(
     contacts: contactSelector(state, {}),
     loader: loader(state),
     userDetails: userDetails(state),
+    allMessages: allMessageSelector(state, ownprops),
   }),
-  {addFriendToContactList},
+  {addFriendToContactList, addMessage},
 )(App);
